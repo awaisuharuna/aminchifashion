@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Aminchi Fashion — Admin Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  :root{
+    --crimson:#681326;--crimson-dark:#4a0d1a;--gold:#e0c16c;
+    --white:#fff;--off-white:#faf8f5;--light:#f2f0ed;--grey:#6b6b6b;--border:#e0dbd5;
+  }
+  body{font-family:'Inter',sans-serif;background:var(--off-white);color:#1a1a1a;min-height:100vh;}
+
+  /* LOGIN */
+  .login-wrap{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:24px;}
+  .login-card{background:var(--white);border-radius:20px;padding:40px 32px;width:100%;max-width:380px;box-shadow:0 8px 40px rgba(104,19,38,0.12);text-align:center;}
+  .login-logo{width:64px;height:64px;background:var(--crimson);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:24px;font-weight:700;color:var(--gold);font-family:'Inter',sans-serif;}
+  .login-card h2{font-size:22px;font-weight:700;color:var(--crimson-dark);margin-bottom:4px;}
+  .login-card p{font-size:13px;color:var(--grey);margin-bottom:28px;}
+  .login-card input{width:100%;padding:13px 16px;border:1.5px solid var(--border);border-radius:10px;font-size:14px;font-family:'Inter',sans-serif;margin-bottom:14px;outline:none;transition:border 0.2s;}
+  .login-card input:focus{border-color:var(--crimson);}
+  .login-card button{width:100%;background:var(--crimson);color:var(--white);border:none;padding:14px;border-radius:50px;font-size:15px;font-weight:600;cursor:pointer;transition:background 0.2s;}
+  .login-card button:hover{background:var(--crimson-dark);}
+  .login-error{color:#c0392b;font-size:13px;margin-top:10px;display:none;}
+
+  /* DASHBOARD */
+  .dashboard{display:none;}
+  .topbar{background:var(--crimson);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 16px rgba(104,19,38,0.3);}
+  .topbar-logo{font-size:16px;font-weight:700;color:var(--white);}
+  .topbar-logo span{color:var(--gold);}
+  .topbar-right{display:flex;align-items:center;gap:12px;}
+  .topbar-right a{color:rgba(255,255,255,0.7);font-size:12px;text-decoration:none;transition:color 0.2s;}
+  .topbar-right a:hover{color:var(--gold);}
+  .logout-btn{background:rgba(255,255,255,0.12);color:var(--white);border:none;padding:7px 14px;border-radius:50px;font-size:12px;font-weight:600;cursor:pointer;transition:background 0.2s;}
+  .logout-btn:hover{background:rgba(255,255,255,0.22);}
+
+  .main{max-width:960px;margin:0 auto;padding:32px 20px;}
+  .page-title{font-size:22px;font-weight:700;color:var(--crimson-dark);margin-bottom:4px;}
+  .page-sub{font-size:13px;color:var(--grey);margin-bottom:28px;}
+
+  /* STATS */
+  .stats{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:32px;}
+  .stat-card{background:var(--white);border-radius:14px;padding:18px;box-shadow:0 2px 10px rgba(0,0,0,0.05);text-align:center;}
+  .stat-num{font-size:28px;font-weight:700;color:var(--crimson);margin-bottom:4px;}
+  .stat-label{font-size:12px;color:var(--grey);}
+
+  /* UPLOAD SECTION */
+  .card{background:var(--white);border-radius:16px;padding:24px;box-shadow:0 2px 10px rgba(0,0,0,0.05);margin-bottom:24px;}
+  .card h3{font-size:16px;font-weight:700;color:var(--crimson-dark);margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+  .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
+  .form-group{display:flex;flex-direction:column;gap:6px;}
+  .form-group label{font-size:12px;font-weight:600;color:var(--crimson-dark);}
+  .form-group input,.form-group select{padding:10px 13px;border:1.5px solid var(--border);border-radius:9px;font-size:13px;font-family:'Inter',sans-serif;outline:none;transition:border 0.2s;width:100%;}
+  .form-group input:focus,.form-group select:focus{border-color:var(--crimson);}
+
+  .upload-zone{border:2px dashed var(--border);border-radius:12px;padding:28px;text-align:center;cursor:pointer;transition:all 0.2s;margin-bottom:14px;position:relative;}
+  .upload-zone:hover,.upload-zone.dragover{border-color:var(--crimson);background:rgba(104,19,38,0.03);}
+  .upload-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+  .upload-icon{font-size:32px;margin-bottom:8px;}
+  .upload-zone p{font-size:13px;color:var(--grey);}
+  .upload-zone .upload-hint{font-size:11px;color:#aaa;margin-top:4px;}
+  .preview-img{width:100%;max-height:180px;object-fit:cover;border-radius:10px;margin-bottom:14px;display:none;}
+
+  .progress-bar-wrap{background:#f0ece8;border-radius:50px;height:6px;margin-bottom:14px;display:none;}
+  .progress-bar{height:6px;border-radius:50px;background:var(--crimson);width:0%;transition:width 0.3s;}
+
+  .upload-btn{width:100%;background:var(--crimson);color:var(--white);border:none;padding:13px;border-radius:50px;font-size:14px;font-weight:600;cursor:pointer;transition:background 0.2s;display:flex;align-items:center;justify-content:center;gap:8px;}
+  .upload-btn:hover{background:var(--crimson-dark);}
+  .upload-btn:disabled{opacity:0.6;cursor:not-allowed;}
+
+  .msg{padding:12px 16px;border-radius:10px;font-size:13px;margin-top:12px;display:none;}
+  .msg.success{background:#e8f5e9;color:#2e7d32;border:1px solid #c8e6c9;}
+  .msg.error{background:#fdecea;color:#c62828;border:1px solid #ffcdd2;}
+
+  /* GALLERY MANAGEMENT */
+  .items-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;}
+  .item-card{background:var(--off-white);border:1.5px solid var(--border);border-radius:12px;overflow:hidden;position:relative;}
+  .item-card img{width:100%;aspect-ratio:1;object-fit:cover;display:block;background:var(--light);}
+  .item-card .item-info{padding:10px 12px;}
+  .item-card .item-name{font-size:13px;font-weight:600;color:var(--crimson-dark);}
+  .item-card .item-cat{font-size:11px;color:var(--grey);margin-bottom:8px;}
+  .item-card .item-actions{display:flex;gap:8px;}
+  .item-card .del-btn{background:#fdecea;color:#c62828;border:none;padding:6px 12px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;transition:background 0.2s;flex:1;}
+  .item-card .del-btn:hover{background:#ffcdd2;}
+  .item-card .edit-btn{background:rgba(104,19,38,0.08);color:var(--crimson);border:none;padding:6px 12px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;transition:background 0.2s;flex:1;}
+  .item-card .edit-btn:hover{background:rgba(104,19,38,0.15);}
+  .empty-state{text-align:center;padding:40px 20px;color:var(--grey);font-size:14px;}
+  .empty-state .empty-icon{font-size:40px;margin-bottom:12px;}
+
+  .badge{display:inline-block;background:var(--gold);color:var(--crimson-dark);font-size:11px;font-weight:700;padding:2px 8px;border-radius:50px;margin-left:6px;}
+
+  @media(min-width:600px){
+    .stats{grid-template-columns:repeat(4,1fr);}
+    .items-grid{grid-template-columns:repeat(3,1fr);}
+    .form-row{grid-template-columns:1fr 1fr 1fr;}
+  }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="login-wrap" id="loginWrap">
+  <div class="login-card">
+    <div class="login-logo">AF</div>
+    <h2>Admin Dashboard</h2>
+    <p>Aminchi Fashion · Kano, Nigeria</p>
+    <input type="password" id="pwInput" placeholder="Enter your password" onkeydown="if(event.key==='Enter')doLogin()"/>
+    <button onclick="doLogin()">Login →</button>
+    <p class="login-error" id="loginErr">❌ Incorrect password. Try again.</p>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div class="dashboard" id="dashWrap">
+
+  <div class="topbar">
+    <div class="topbar-logo">Aminchi <span>Fashion</span> · Admin</div>
+    <div class="topbar-right">
+      <a href="aminchi-fashion.html" target="_blank">View Live Site →</a>
+      <button class="logout-btn" onclick="doLogout()">Logout</button>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="page-title">Welcome back 👋</div>
+    <p class="page-sub">Manage your product gallery and upload new items below.</p>
+
+    <!-- STATS -->
+    <div class="stats">
+      <div class="stat-card">
+        <div class="stat-num" id="statTotal">0</div>
+        <div class="stat-label">Total Items</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="statCats">0</div>
+        <div class="stat-label">Categories</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">2–4</div>
+        <div class="stat-label">Days Delivery</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">🌍</div>
+        <div class="stat-label">Worldwide</div>
+      </div>
+    </div>
+
+    <!-- UPLOAD -->
+    <div class="card">
+      <h3>📤 Upload New Item</h3>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Item Name</label>
+          <input type="text" id="upName" placeholder="e.g. White Babbar Riga"/>
+        </div>
+        <div class="form-group">
+          <label>Category</label>
+          <select id="upCat">
+            <option value="">-- Select --</option>
+            <option>Babbar Riga</option>
+            <option>Kaftan</option>
+            <option>Kufta</option>
+            <option>Shadda</option>
+            <option>Fabric / Zane</option>
+            <option>Plain Riga</option>
+            <option>Monogram</option>
+            <option>Cap / Zanna Bukar</option>
+            <option>Babban Riga Set</option>
+            <option>Custom Order</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Short Detail</label>
+          <input type="text" id="upDetail" placeholder="e.g. Custom dinki · 4 days"/>
+        </div>
+      </div>
+
+      <div class="upload-zone" id="uploadZone">
+        <input type="file" id="fileInput" accept="image/*" onchange="previewFile(this)"/>
+        <div class="upload-icon">🖼️</div>
+        <p>Tap to choose a photo or drag it here</p>
+        <p class="upload-hint">JPG, PNG, WEBP · Max 10MB</p>
+      </div>
+      <img class="preview-img" id="previewImg" src="" alt="Preview"/>
+
+      <div class="progress-bar-wrap" id="progressWrap">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+
+      <button class="upload-btn" id="uploadBtn" onclick="doUpload()">
+        📤 Upload Item to Gallery
+      </button>
+      <div class="msg" id="uploadMsg"></div>
+    </div>
+
+    <!-- GALLERY -->
+    <div class="card">
+      <h3>🗂️ Current Gallery Items <span class="badge" id="galleryCount">0</span></h3>
+      <div class="items-grid" id="itemsGrid">
+        <div class="empty-state" id="emptyState">
+          <div class="empty-icon">📭</div>
+          <p>No items uploaded yet.<br/>Upload your first item above.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // ── CONFIG ──
+  const CLOUD_NAME = 'yn4phtsj';
+  const UPLOAD_PRESET = 'aminchifashion';
+  const ADMIN_PW = 'Pahad143712';
+  const STORAGE_KEY = 'aminchi_gallery';
+
+  // ── AUTH ──
+  function doLogin() {
+    const pw = document.getElementById('pwInput').value;
+    if (pw === ADMIN_PW) {
+      document.getElementById('loginWrap').style.display = 'none';
+      document.getElementById('dashWrap').style.display = 'block';
+      sessionStorage.setItem('af_auth', '1');
+      loadGallery();
+    } else {
+      document.getElementById('loginErr').style.display = 'block';
+    }
+  }
+
+  function doLogout() {
+    sessionStorage.removeItem('af_auth');
+    document.getElementById('loginWrap').style.display = 'flex';
+    document.getElementById('dashWrap').style.display = 'none';
+    document.getElementById('pwInput').value = '';
+    document.getElementById('loginErr').style.display = 'none';
+  }
+
+  if (sessionStorage.getItem('af_auth') === '1') {
+    document.getElementById('loginWrap').style.display = 'none';
+    document.getElementById('dashWrap').style.display = 'block';
+    window.addEventListener('DOMContentLoaded', loadGallery);
+  }
+
+  // ── PREVIEW ──
+  function previewFile(input) {
+    if (input.files && input.files[0]) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = document.getElementById('previewImg');
+        img.src = e.target.result;
+        img.style.display = 'block';
+      };
+      reader.readAsDataURL(input.files[0]);
+    }
+  }
+
+  // ── DRAG OVER ──
+  const zone = document.getElementById('uploadZone');
+  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('dragover'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
+  zone.addEventListener('drop', e => {
+    e.preventDefault();
+    zone.classList.remove('dragover');
+    const file = e.dataTransfer.files[0];
+    if (file) {
+      document.getElementById('fileInput').files = e.dataTransfer.files;
+      previewFile(document.getElementById('fileInput'));
+    }
+  });
+
+  // ── UPLOAD TO CLOUDINARY ──
+  async function doUpload() {
+    const name = document.getElementById('upName').value.trim();
+    const cat = document.getElementById('upCat').value;
+    const detail = document.getElementById('upDetail').value.trim();
+    const file = document.getElementById('fileInput').files[0];
+    const msg = document.getElementById('uploadMsg');
+    const btn = document.getElementById('uploadBtn');
+
+    if (!name) { showMsg('error', 'Please enter the item name.'); return; }
+    if (!cat) { showMsg('error', 'Please select a category.'); return; }
+    if (!file) { showMsg('error', 'Please choose a photo to upload.'); return; }
+
+    btn.disabled = true;
+    btn.textContent = 'Uploading...';
+    msg.style.display = 'none';
+
+    const progressWrap = document.getElementById('progressWrap');
+    const progressBar = document.getElementById('progressBar');
+    progressWrap.style.display = 'block';
+    progressBar.style.width = '0%';
+
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', UPLOAD_PRESET);
+    formData.append('folder', 'aminchi-fashion');
+
+    try {
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`);
+
+      xhr.upload.onprogress = function(e) {
+        if (e.lengthComputable) {
+          const pct = Math.round((e.loaded / e.total) * 100);
+          progressBar.style.width = pct + '%';
+        }
+      };
+
+      xhr.onload = function() {
+        if (xhr.status === 200) {
+          const res = JSON.parse(xhr.responseText);
+          const items = getItems();
+          items.push({
+            id: Date.now(),
+            name: name,
+            category: cat,
+            detail: detail || cat,
+            url: res.secure_url,
+            uploadedAt: new Date().toLocaleDateString()
+          });
+          saveItems(items);
+          loadGallery();
+          showMsg('success', `✅ "${name}" uploaded successfully!`);
+          resetForm();
+        } else {
+          showMsg('error', '❌ Upload failed. Please try again.');
+        }
+        btn.disabled = false;
+        btn.textContent = '📤 Upload Item to Gallery';
+        progressWrap.style.display = 'none';
+      };
+
+      xhr.onerror = function() {
+        showMsg('error', '❌ Network error. Check your connection.');
+        btn.disabled = false;
+        btn.textContent = '📤 Upload Item to Gallery';
+        progressWrap.style.display = 'none';
+      };
+
+      xhr.send(formData);
+
+    } catch(err) {
+      showMsg('error', '❌ Something went wrong: ' + err.message);
+      btn.disabled = false;
+      btn.textContent = '📤 Upload Item to Gallery';
+      progressWrap.style.display = 'none';
+    }
+  }
+
+  // ── STORAGE ──
+  function getItems() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
+    catch { return []; }
+  }
+
+  function saveItems(items) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+  }
+
+  function deleteItem(id) {
+    if (!confirm('Delete this item from the gallery?')) return;
+    const items = getItems().filter(i => i.id !== id);
+    saveItems(items);
+    loadGallery();
+  }
+
+  // ── RENDER GALLERY ──
+  function loadGallery() {
+    const items = getItems();
+    const grid = document.getElementById('itemsGrid');
+    const empty = document.getElementById('emptyState');
+    const count = document.getElementById('galleryCount');
+    const statTotal = document.getElementById('statTotal');
+    const statCats = document.getElementById('statCats');
+
+    count.textContent = items.length;
+    statTotal.textContent = items.length;
+    const cats = new Set(items.map(i => i.category)).size;
+    statCats.textContent = cats;
+
+    if (items.length === 0) {
+      grid.innerHTML = '';
+      grid.appendChild(empty);
+      empty.style.display = 'block';
+      return;
+    }
+
+    grid.innerHTML = items.map(item => `
+      <div class="item-card">
+        <img src="${item.url}" alt="${item.name}" loading="lazy"/>
+        <div class="item-info">
+          <div class="item-name">${item.name}</div>
+          <div class="item-cat">${item.category} · ${item.uploadedAt}</div>
+          <div class="item-actions">
+            <button class="del-btn" onclick="deleteItem(${item.id})">🗑 Delete</button>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // ── HELPERS ──
+  function showMsg(type, text) {
+    const msg = document.getElementById('uploadMsg');
+    msg.className = 'msg ' + type;
+    msg.textContent = text;
+    msg.style.display = 'block';
+  }
+
+  function resetForm() {
+    document.getElementById('upName').value = '';
+    document.getElementById('upCat').value = '';
+    document.getElementById('upDetail').value = '';
+    document.getElementById('fileInput').value = '';
+    document.getElementById('previewImg').style.display = 'none';
+    document.getElementById('previewImg').src = '';
+  }
+
+  window.addEventListener('DOMContentLoaded', function() {
+    if (sessionStorage.getItem('af_auth') === '1') loadGallery();
+  });
+</script>
+</body>
+</html>
