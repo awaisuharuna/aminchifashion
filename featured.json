@@ -1,0 +1,44 @@
+[
+  {
+    "id": "babbar_riga",
+    "name": "Babbar Riga",
+    "desc": "Premium hand-crafted Hausa grand robe.",
+    "price": 30000,
+    "img": null
+  },
+  {
+    "id": "kaftan",
+    "name": "Kaftan",
+    "desc": "Elegant Kaftan styles — plain and embroidered.",
+    "price": 30000,
+    "img": null
+  },
+  {
+    "id": "plain",
+    "name": "Plain",
+    "desc": "Clean minimalist native wear.",
+    "price": 30000,
+    "img": null
+  },
+  {
+    "id": "caps",
+    "name": "Caps",
+    "desc": "Authentic traditional Hausa caps.",
+    "price": 15000,
+    "img": null
+  },
+  {
+    "id": "shoes",
+    "name": "Shoes",
+    "desc": "Original handmade native shoes. Sizes: 40-45.",
+    "price": 12000,
+    "img": "https://res.cloudinary.com/yn4phtsj/image/upload/v1783758038/aminchi-featured/ihlbuembks6wkmccmmzr.jpg"
+  },
+  {
+    "id": "fabrics",
+    "name": "Fabrics",
+    "desc": "Premium brocade and native fabrics.",
+    "price": 20000,
+    "img": null
+  }
+]
