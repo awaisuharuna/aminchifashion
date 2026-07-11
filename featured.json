@@ -9,7 +9,7 @@
   {
     "id": "kaftan",
     "name": "Kaftan",
-    "desc": "Elegant Kaftan styles — plain and embroidered.",
+    "desc": "Elegant Kaftan styles â plain and embroidered.",
     "price": 30000,
     "img": null
   },
@@ -18,7 +18,7 @@
     "name": "Plain",
     "desc": "Clean minimalist native wear.",
     "price": 30000,
-    "img": null
+    "img": "https://res.cloudinary.com/yn4phtsj/image/upload/v1783787317/aminchi-featured/opmj8xlbgfeoxctu0byo.jpg"
   },
   {
     "id": "caps",
