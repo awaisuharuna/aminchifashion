@@ -3,8 +3,8 @@
     "id": "babbar_riga",
     "name": "Babbar Riga",
     "desc": "Premium hand-crafted Hausa grand robe.",
-    "price": 30000,
-    "img": null
+    "price": 50000,
+    "img": "https://res.cloudinary.com/yn4phtsj/image/upload/v1783787504/aminchi-featured/cwyuqjqfak45rbzc1vus.jpg"
   },
   {
     "id": "kaftan",
